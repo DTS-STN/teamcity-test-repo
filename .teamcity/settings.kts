@@ -1,4 +1,5 @@
 import jetbrains.buildServer.configs.kotlin.v2019_2.*
+import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.dockerCommand
 import jetbrains.buildServer.configs.kotlin.v2019_2.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.v2019_2.triggers.vcs
 
@@ -42,6 +43,20 @@ object Build : BuildType({
         script {
             name = "Step 1"
             scriptContent = "echo THIS IS BUILDINGGGGG"
+        }
+        dockerCommand {
+            name = "Docker build"
+            commandType = build {
+                source = content {
+                    content = """
+                        FROM scratch
+                        RUN echo echo hello > start.sh
+                        RUN chmod a+x start.sh
+                        CMD start.sh
+                    """.trimIndent()
+                }
+                commandArgs = "--pull"
+            }
         }
     }
 
